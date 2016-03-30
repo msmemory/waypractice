@@ -1,0 +1,38 @@
+
+    <div class="clearfix">
+        <h4>WAYians</h4>
+    	<div>
+        	<div class="post" style="background-color: gray;"> 
+	        	<div style="display:table-row; color:orange;">
+		        	<div style="display:table-cell; width:7%;">id</div>
+		        	<div style="display:table-cell; width:7%;">email</div>
+		        	<div style="display:table-cell; width:7%;">name</div>
+		        	<div style="display:table-cell; width:7%;">userWay</div>
+		        	<div style="display:table-cell; width:7%;">way</div>
+		        	<div style="display:table-cell; width:7%;">wayUseDate</div>
+		        	<div style="display:table-cell; width:7%;">wayLastDate</div>
+		        	<div style="display:table-cell; width:7%;">city_code</div>
+		        	<div style="display:table-cell; width:7%;">city_name</div>
+		        	<div style="display:table-cell; width:7%;">skin_test</div>
+		        	<div style="display:table-cell; width:7%;">skin_count</div>
+		        	<div style="display:table-cell; width:7%;">os</div>
+	        	</div>
+        	</div>
+        	<div class="post" ng-repeat="wayian in wayians | orderBy:'wayLastDate':true" ng-class-odd="'odd'" ng-class-even="'even'"> 
+	        	<div style="display:table-row" ng-click="oneWayian(wayian)">
+		        	<div style="display:table-cell; width:7%;">{{wayian.id}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.email}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.name}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.userWay}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.way}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.wayUseDate}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.wayLastDate}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.city_code}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.city_name}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.skin_test}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.skin_count}}</div>
+		        	<div style="display:table-cell; width:7%;">{{wayian.os}}</div>
+	        	</div>
+        	</div>
+      	</div>
+    </div>

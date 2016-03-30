@@ -10,6 +10,8 @@ require('./models/models.js');
 
 var index = require('./routes/index');
 var api = require('./routes/api');
+var diag = require('./routes/diag');
+
 var authenticate = require('./routes/authenticate')(passport);
 
 var mongoose = require('mongoose');
@@ -54,8 +56,9 @@ initPassport(passport);
 
 
 
-app.use('/', index);
+// app.use('/', index);
 app.use('/api', api);
+app.use('/diag', diag);
 app.use('/auth', authenticate);
 
 

@@ -6,6 +6,11 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-resource.js"></script>
+
+		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+		<script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
 		<!-- <script src="../bower_components/angular/angular.min.js"></script> -->
 		
 		<script src="javascripts/saydoctor.js"></script>
@@ -31,6 +36,6 @@
 				<p class='navbar-right navbar-text' ng-show='authenticated'>Signed in as {{current_user}}
 				</p>
 		<div class="col-md-offset-2 col-md-8">
-			<div ng-view></div>
+			<div ng-view onload="ngViewLoad()"></div>
 	</body>
 </html>

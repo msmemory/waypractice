@@ -1,15 +1,7 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var bCrypt = require('bcrypt-nodejs');
 var mongoose = require('mongoose');
-var User = mongoose.model('User');
-
-//temporary data store
-var users = {
-	// "stephen": {
-	// 							"username" : "stephen",
-	// 							"password" : "$2a$10$BQWRhn2cCNxk4uMSJGLVSuA472mUXSnvnkBqlYKGVMuVDYqVX6uq."
-	// 							}
-};
+var Doctor = mongoose.model('Doctor');
 
 module.exports = function(passport){
 
@@ -24,7 +16,7 @@ module.exports = function(passport){
     passport.deserializeUser(function(id, done) {
 
     	//return user object back
-    	User.findById(id, function(err, user){
+    	Doctor.findById(id, function(err, user){
 
         	console.log('deserializing:', user.username);
     		return done(err, user);
@@ -37,7 +29,7 @@ module.exports = function(passport){
         },
         function(req, username, password, done) { 
 
-        	User.findOne({username: username}, function(err, user){
+        	Doctor.findOne({username: username}, function(err, user){
         		if(err){
         			return done(err, false);
         		}
@@ -54,19 +46,6 @@ module.exports = function(passport){
         		console.log('sucessfully login ' + user);
         		return done (null, user);
         	})
-
-        	// if(!users[username]){
-        	// 	return done('user not found', false);
-        	// }
-
-        	// if(isValidPassword(users[username], password)){
-        	// 	return done('invalid password', false);
-        	// }
-
-        	// //sucessully signed in
-        	// console.log('sucessfully signed in');
-
-         //    return done(null, users[username]);
         }
     ));
 
@@ -75,7 +54,7 @@ module.exports = function(passport){
         },
         function(req, username, password, done) {
 
-        	User.findOne({username: username}, function(err, user){
+        	Doctor.findOne({username: username}, function(err, user){
         		
         		if(err){
         			return done(err, false);
@@ -87,12 +66,16 @@ module.exports = function(passport){
         		}
         		else
         		{
-		    		var newUser = new User();
+		    		var newDoctor = new Doctor();
 
-					newUser.username = username;
-					newUser.password = createHash(password);
+					newDoctor.username = username;
+					newDoctor.password = createHash(password);
+					newDoctor.name = req.body.name || req.query.name;
+					newDoctor.address = req.body.address || req.query.address;
+					newDoctor.tel = req.body.tel || req.query.tel;
+					newDoctor.certi = req.body.certi || req.query.certi;
 
-		    		newUser.save(function(err, user){
+		    		newDoctor.save(function(err, user){
 		    			if(err)
 		    			{
 		    				return done(err, false);
@@ -100,27 +83,11 @@ module.exports = function(passport){
 		    			else
 		    			{
 			    			console.log('sucessfully signed up user' + username);
-			    			return done(null, newUser);
+			    			return done(null, newDoctor);
 		    			}
 		    		});
         		}
         	});
-
-
-        	// //check if the user already exists
-        	// if(users[username]){
-        	// 	return done('username already taken', false);
-        	// }
-
-        	// //add user to db
-        	// users[username] = {
-        	// 	username: username,
-        	// 	password: createHash(password)
-        	// };
-
-			// console.log(users);
-
-            // return done(null, users[username]);
         }
     ));
 

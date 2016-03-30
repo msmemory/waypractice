@@ -4,15 +4,10 @@ var app = angular.module('MyApp',['ngRoute', 'ngResource']).run(function($rootSc
   $rootScope.authenticated = false;
   $rootScope.current_user = "";
 
-  $rootScope.logout = function(){
-    $http.get('/auth/signout');
-
-    $rootScope.authenticated = false;
-    $rootScope.current_user = "";
-  }
+  $rootScope.wayian = "";
+  $rootScope.skinSv = [];
 
   $rootScope.signout = function() {
-    console.log('logging out');
     $http.get('/auth/signout');
     $rootScope.authenticated = false;
     $rootScope.current_user = '';
@@ -25,9 +20,19 @@ var app = angular.module('MyApp',['ngRoute', 'ngResource']).run(function($rootSc
 app.config(function($routeProvider){
   $routeProvider
 
+    // .when('/', {
+    //   templateUrl: 'main.html',
+    //   controller: 'mainController'
+    // })
+
     .when('/', {
-      templateUrl: 'main.html',
-      controller: 'mainController'
+      templateUrl: 'wayian.html',
+      controller: 'diagController'
+    })
+
+    .when('/diagnose', {
+      templateUrl: 'diagnose.html',
+      controller: 'diagController'
     })
 
     .when('/login', {
@@ -55,13 +60,20 @@ app.factory('postService', function($resource){
 
 
 
+app.factory('diagWayianService', function($resource){
+  return $resource('/diag/wayian/:id');
+
+})
+
+
+
 app.controller('mainController', function($scope, $rootScope, postService) {
 
-	$scope.posts = postService.query();
-	$scope.newPost = {  created_by:'',
-							text:'',
-							created_at:''
-					 };
+  $scope.posts = postService.query();
+  $scope.newPost = {  created_by:'',
+              text:'',
+              created_at:''
+           };
 
   // postService.getAll().success(function(data){
   //   $scope.posts = data;
@@ -79,6 +91,86 @@ app.controller('mainController', function($scope, $rootScope, postService) {
            };
       });
     };
+});
+
+
+
+app.controller('diagController', function($scope, $rootScope, $location, diagWayianService) {
+
+  $scope.wayians = diagWayianService.query();
+
+  $scope.oneWayian = function(sWayian) {
+
+    diagWayianService.query({id:sWayian.email}).$promise.then(function(skinSv){
+
+console.log(skinSv);
+
+        var sKinSvData = [];
+        for (var i = 0; i < skinSv.length; i++) {
+
+            // let xDate = result.skin_results[i].diagnosis_date.substr(0,16).replace('-','').replace('-','').replace(':','').replace('T','');
+            let xDate = new Date(skinSv[i].diagnosis_date).getTime();
+            let ySkin = skinSv[i].condition;
+
+            // console.log(xDate);
+            // console.log(ySkin);
+
+            sKinSvData[i] = [new Date(xDate), parseFloat(ySkin)];
+        }
+
+        sKinSvData.sort(function(a, b){  
+            return ((a[0] < b[0]) ? -1 : ((a[0] > b[0]) ? 1 : 0));
+        });
+
+// console.log(sKinSvData.toString());
+
+        $rootScope.wayian = sWayian;
+        $rootScope.skinSv = sKinSvData;
+        console.log(skinSv);
+        $location.path('/diagnose');
+    });
+
+  };
+
+
+  $scope.$watch('$viewContentLoaded', function() {
+
+    // alert('load :: ' + $location.path());
+    if($location.path() == '/diagnose'){
+
+        new Dygraph($('#skin_survey_chart')[0], $rootScope.skinSv||[[0,0]], {
+            labels: ["DateTime", "Conditions"],
+            // customBars: true,
+            title: $rootScope.wayian.name + '\'s Skin Survey',
+            // ylabel: 'Temperature (F)',
+            legend: 'always',
+            labelsDivStyles: {
+                'textAlign': 'right'
+            },
+            showRangeSelector: true
+        });
+      
+    }
+
+  });
+
+
+
+
+  $scope.post = function() {
+
+    $scope.newPost.created_by = $rootScope.current_user;
+    $scope.newPost.created_at = Date.now();
+    postService.save($scope.newPost, function(){
+      $scope.posts = postService.query();
+      $scope.newPost = {  created_by:'',
+            text:'',
+            created_at:''
+         };
+    });
+  };
+
+  
 });
 
 
